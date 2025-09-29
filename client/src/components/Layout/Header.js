@@ -26,6 +26,7 @@ const Header = () => {
     });
     localStorage.removeItem("auth");
     toast.success("Logout Successfully");
+    navigate("/login");
   };
 
   // Fetch all products
@@ -78,15 +79,14 @@ const Header = () => {
                   Home
                 </NavLink>
               </li>
+
+              {/* Categories Dropdown */}
               <li
                 className={`nav-item dropdown ${openProd ? "show" : ""}`}
                 onMouseEnter={() => setOpenProd(true)}
                 onMouseLeave={() => setOpenProd(false)}
               >
-                <button
-                  className="nav-link dropdown-toggle btn btn-link"
-                  type="button"
-                >
+                <button className="nav-link dropdown-toggle btn btn-link" type="button">
                   Categories
                 </button>
                 <ul className={`dropdown-menu ${openProd ? "show" : ""}`}>
@@ -134,37 +134,25 @@ const Header = () => {
                   </li>
                 </>
               ) : (
-                <li className="nav-item dropdown">
-                  <Link
-                    className="nav-link dropdown-toggle"
-                    to="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                  >
-                    {auth?.user?.name}
-                  </Link>
-                  <ul className="dropdown-menu">
-                    <li>
-                      <NavLink
-                        to={`/dashboard/${
-                          auth?.user?.role === 1 ? "admin" : "user"
-                        }`}
-                        className="dropdown-item"
-                      >
-                        Dashboard
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        onClick={handleLogout}
-                        to="/login"
-                        className="dropdown-item"
-                      >
-                        Logout
-                      </NavLink>
-                    </li>
-                  </ul>
-                </li>
+                <>
+                  <li className="nav-item">
+                    <NavLink
+                      to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+                      className="nav-link"
+                    >
+                      Dashboard
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <button
+                      className="nav-link btn btn-link"
+                      onClick={handleLogout}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Logout
+                    </button>
+                  </li>
+                </>
               )}
 
               {/* Cart */}
