@@ -18,7 +18,6 @@
     border-radius: 8px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     width: 400px;
-    /* default width for desktop/laptop */
 }
 
 .form-container form:hover {
@@ -82,11 +81,6 @@
     background-color: #434343;
 }
 
-/* =========================
-   Responsive Design
-========================= */
-
-/* Small devices (mobile) */
 @media (max-width: 576px) {
     .form-container form {
         width: 100%;
@@ -98,7 +92,7 @@
     }
 }
 
-/* Medium devices (tablet) */
+
 @media (min-width: 577px) and (max-width: 992px) {
     .form-container form {
         width: 90%;
@@ -115,7 +109,6 @@
     }
 }
 
-/* Large devices (laptop/desktop) */
 @media (min-width: 993px) and (max-width: 1200px) {
     .form-container form {
         width: 400px;

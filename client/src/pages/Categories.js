@@ -3,7 +3,7 @@ import { useCart } from "../context/cart";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Layout from "../components/Layout/Layout";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { server } from "../config";
 
 const Categories = () => {
@@ -13,6 +13,7 @@ const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { slug } = useParams(); 
 
   // Fetch all categories
   const getAllCategories = async () => {
@@ -20,40 +21,27 @@ const Categories = () => {
       const { data } = await axios.get(`${server}/category/get-category`);
       if (data?.success) setCategories(data.category);
     } catch (err) {
-      console.error("Error loading categories:", err.message || err);
+      console.error(err);
       toast.error("Error loading categories");
     }
   };
 
-  // Fetch all products
-  const getAllProducts = async () => {
+  // Fetch products 
+  const getProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${server}/product/get-product`);
-      if (data?.success) setProducts(data.products);
+      let response;
+      if (!slug) {
+        response = await axios.get(`${server}/product/get-product`);
+        setSelectedCategory(null);
+      } else {
+        response = await axios.get(`${server}/product/product-category/${slug}`);
+        setSelectedCategory(slug);
+      }
+      if (response.data?.success) setProducts(response.data.products);
       else setProducts([]);
     } catch (err) {
-      console.error("Error loading products:", err.message || err);
-      toast.error("Failed to load products");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch products by category
-  const getProductsByCategory = async (slug) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`${server}/product/product-category/${slug}`);
-      if (data?.success) {
-        setProducts(data.products);
-        setSelectedCategory(slug);
-      } else {
-        setProducts([]);
-        toast.error("No products found in this category");
-      }
-    } catch (err) {
-      console.error("Error loading category products:", err.message || err);
+      console.error(err);
       toast.error("Error loading products");
     } finally {
       setLoading(false);
@@ -78,20 +66,26 @@ const Categories = () => {
 
   useEffect(() => {
     getAllCategories();
-    getAllProducts();
-  }, []);
+    getProducts();
+  }, [slug]); 
 
   return (
     <Layout title="Categories & Products">
       <div className="container mt-5 pt-5">
         <h1 className="mb-4">Categories</h1>
         <div className="d-flex flex-wrap gap-2 mb-4">
+          <button
+            className={`btn ${selectedCategory === null ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => navigate("/categories")}
+          >
+            All Categories
+          </button>
           {categories.length > 0 ? (
             categories.map((c) => (
               <button
                 key={c._id}
                 className={`btn ${selectedCategory === c.slug ? "btn-primary" : "btn-outline-primary"}`}
-                onClick={() => getProductsByCategory(c.slug)}
+                onClick={() => navigate(`/categories/${c.slug}`)}
               >
                 {c.name}
               </button>
