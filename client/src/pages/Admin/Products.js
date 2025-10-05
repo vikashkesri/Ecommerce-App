@@ -16,7 +16,7 @@ const Products = () => {
       const token = authData?.token;
 
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/product/get-product",
+        "https://backend-ufwh.onrender.com/api/v1/product/get-product",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,7 +43,7 @@ const Products = () => {
       if (!confirmDelete) return;
 
       await axios.delete(
-        `http://localhost:5000/api/v1/product/delete-product/${pid}`,
+        `https://backend-ufwh.onrender.com/api/v1/product/delete-product/${pid}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const Products = () => {
                 style={{ width: "18rem" }}
               >
                 <img
-                  src={`http://localhost:5000/api/v1/product/product-photo/${p._id}`}
+                  src={`https://backend-ufwh.onrender.com/api/v1/product/product-photo/${p._id}`}
                   className="card-img-top"
                   alt={p.name}
                 />
