@@ -13,7 +13,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState({});
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  const backendURL = "http://localhost:5000/api/v1/product";
+  const backendURL = "https://backend-ufwh.onrender.com/api/v1/product";
 
   // get single product
   const getSingleProduct = async () => {
