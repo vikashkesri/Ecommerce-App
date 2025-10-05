@@ -27,23 +27,21 @@ const Profile = () => {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        "http://localhost:5000/api/v1/auth/profile",
+        "https://backend-ufwh.onrender.com/api/v1/auth/profile",
         { name, password, phone, address },
         { headers: { Authorization: `Bearer ${auth?.token}` } }
       );
 
       if (!data.success) return toast.error(data.message);
 
-      // ✅ Update auth state & localStorage instantly
+      // Update auth state & localStorage instantly
       const updatedUser = data.updatedUser || data.user;
       const newAuth = { ...auth, user: { ...auth.user, ...updatedUser } };
       setAuth(newAuth);
       localStorage.setItem("auth", JSON.stringify(newAuth));
 
       toast.success("Profile updated successfully");
-      setPassword(""); // clear password field
-
-      // Optional redirect to cart after update
+      setPassword(""); 
       navigate("/cart");
     } catch (err) {
       console.log("Profile update error:", err.response?.data || err.message);
