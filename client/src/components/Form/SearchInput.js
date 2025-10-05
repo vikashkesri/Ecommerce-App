@@ -14,7 +14,7 @@ const SearchInput = () => {
 
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/v1/product/search?keyword=${keyword}`
+        `https://backend-ufwh.onrender.com/api/v1/product/search?keyword=${keyword}`
       );
       setSearch({
         ...search,
