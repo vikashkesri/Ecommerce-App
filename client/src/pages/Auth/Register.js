@@ -26,7 +26,7 @@ const Register = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/register", 
+        "https://backend-ufwh.onrender.com/api/v1/auth/register", 
         {
           name,
           email,
