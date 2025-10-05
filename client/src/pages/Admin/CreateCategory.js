@@ -20,7 +20,7 @@ const CreateCategory = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/category/get-category"
+        "https://backend-ufwh.onrender.com/api/v1/category/get-category"
       );
       if (data?.success) {
         setCategories(data?.category);
@@ -42,7 +42,7 @@ const CreateCategory = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/category/create-category",
+        "https://backend-ufwh.onrender.com/api/v1/category/create-category",
         { name },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -95,7 +95,7 @@ const CreateCategory = () => {
 
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/v1/category/delete-category/${id}`,
+        `https://backend-ufwh.onrender.com/api/v1/category/delete-category/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
