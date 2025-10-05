@@ -4,19 +4,19 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDB from "./config/db.js";
 import authRoute from "./routes/authRoute.js";
-import cors from "cors";
 import categoryRoutes from "./routes/categoryRoutes.js";
-import productRoutes from "./routes/productRoutrs.js"; // make sure spelling is correct
+import productRoutes from "./routes/productRoutrs.js"; // exact file name
+import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// Configure environment variables
+// Load environment variables
 dotenv.config();
 
 // Connect to MongoDB
 connectDB();
 
-// Create Express app
+// Initialize Express app
 const app = express();
 
 // Middleware
@@ -38,7 +38,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 
-// Serve React frontend
+// Serve React frontend (production)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -48,9 +48,14 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
-// PORT
-const PORT = process.env.PORT || 5000;
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Server Error", error: err.message });
+});
 
+// Start server
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(
     `Server running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`
