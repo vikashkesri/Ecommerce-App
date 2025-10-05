@@ -74,47 +74,51 @@ const UpdateProduct = () => {
     getSingleProduct();
   }, [slug]);
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      if (!token) {
-        toast.error("You are not authorized");
-        return;
-      }
-
-      const productData = new FormData();
-      productData.append("name", name);
-      productData.append("description", description);
-      productData.append("price", price);
-      productData.append("quantity", quantity);
-      productData.append("category", category);
-      productData.append("shipping", shipping); 
-      if (photo) productData.append("photo", photo);
-
-      const { data } = await axios.put(
-        `http://localhost:5000/api/v1/product/update-product/${productId}`,
-        productData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (data?.success) {
-        toast.success("Product updated successfully!");
-        navigate("/dashboard/admin/products");
-      } else {
-        toast.error(data?.message || "Something went wrong while updating");
-      }
-    } catch (error) {
-      console.error("Error updating product:", error?.response || error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Something went wrong while updating product"
-      );
+ // Inside handleUpdate function
+const handleUpdate = async (e) => {
+  e.preventDefault();
+  try {
+    if (!token) {
+      toast.error("You are not authorized");
+      return;
     }
-  };
+
+    // Create FormData for multipart request
+    const productData = new FormData();
+    productData.append("name", name);
+    productData.append("description", description);
+    productData.append("price", price);
+    productData.append("quantity", quantity);
+    productData.append("category", category);
+    productData.append("shipping", shipping); 
+    if (photo) productData.append("photo", photo); // only append if changed
+
+    const { data } = await axios.put(
+      `http://localhost:5000/api/v1/product/update-product/${productId}`,
+      productData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // ensure correct header
+        },
+      }
+    );
+
+    if (data?.success) {
+      toast.success("Product updated successfully!");
+      navigate("/dashboard/admin/products");
+    } else {
+      toast.error(data?.message || "Something went wrong while updating");
+    }
+  } catch (error) {
+    console.error("Error updating product:", error?.response || error);
+    toast.error(
+      error?.response?.data?.message ||
+        "Something went wrong while updating product"
+    );
+  }
+};
+
 
 
   const handleDelete = async () => {
