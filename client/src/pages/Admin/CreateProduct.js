@@ -19,8 +19,6 @@ const CreateProduct = () => {
   const [photo, setPhoto] = useState("");
 
   const navigate = useNavigate();
-
-  // Fetch all categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
@@ -39,7 +37,6 @@ const CreateProduct = () => {
     getAllCategory();
   }, []);
 
-  // Handle product creation
   const handleCreate = async () => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
