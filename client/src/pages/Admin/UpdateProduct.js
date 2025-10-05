@@ -35,7 +35,7 @@ const UpdateProduct = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/category/get-category"
+        "https://backend-ufwh.onrender.com/api/v1/category/get-category"
       );
       if (data?.success) setCategories(data.categories);
     } catch (error) {
@@ -47,7 +47,7 @@ const UpdateProduct = () => {
   const getSingleProduct = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/v1/product/get-product/${slug}`
+        `https://backend-ufwh.onrender.com/api/v1/product/get-product/${slug}`
       );
       if (data?.success) {
         const p = data.product;
@@ -94,7 +94,7 @@ const handleUpdate = async (e) => {
     if (photo) productData.append("photo", photo); // only append if changed
 
     const { data } = await axios.put(
-      `http://localhost:5000/api/v1/product/update-product/${productId}`,
+      `https://backend-ufwh.onrender.com/api/v1/product/update-product/${productId}`,
       productData,
       {
         headers: {
@@ -128,7 +128,7 @@ const handleUpdate = async (e) => {
         return;
       }
       const { data } = await axios.delete(
-        `http://localhost:5000/api/v1/product/delete-product/${productId}`,
+        `https://backend-ufwh.onrender.com/api/v1/product/delete-product/${productId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -191,7 +191,7 @@ const handleUpdate = async (e) => {
                     src={
                       photo
                         ? URL.createObjectURL(photo)
-                        : `http://localhost:5000/api/v1/product/product-photo/${productId}`
+                        : `https://backend-ufwh.onrender.com/api/v1/product/product-photo/${productId}`
                     }
                     alt="product_photo"
                     height="200px"
