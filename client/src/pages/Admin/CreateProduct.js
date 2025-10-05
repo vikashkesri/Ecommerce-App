@@ -24,7 +24,7 @@ const CreateProduct = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/v1/category/get-category"
+        "https://backend-ufwh.onrender.com/api/v1/category/get-category"
       );
       if (data?.success) {
         setCategories(data.category);
@@ -62,7 +62,7 @@ const CreateProduct = () => {
       }
 
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/product/create-product",
+        "https://backend-ufwh.onrender.com/api/v1/product/create-product",
         productData,
         {
           headers: {
