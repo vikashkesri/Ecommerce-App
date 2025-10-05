@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import Layout from "../../components/Layout/Layout";
 import AdminMenu from "../../components/Layout/AdminMenu";
@@ -7,36 +8,34 @@ import { Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 
 const { Option } = Select;
+const API = process.env.REACT_APP_API || "https://backend-ufwh.onrender.com/api/v1";
 
 const UpdateProduct = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
 
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState("");
+  const [productId, setProductId] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [shipping, setShipping] = useState("");
+  const [category, setCategory] = useState("");
+  const [shipping, setShipping] = useState("0");
   const [photo, setPhoto] = useState(null);
-  const [productId, setProductId] = useState("");
 
-
-  const token = (() => {
+  const getToken = () => {
     try {
       const authData = JSON.parse(localStorage.getItem("auth"));
       return authData?.token || "";
     } catch {
       return "";
     }
-  })();
+  };
 
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get(
-        "https://backend-ufwh.onrender.com/api/v1/category/get-category"
-      );
+      const { data } = await axios.get(`${API}/category/get-category`);
       if (data?.success) setCategories(data.categories);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -46,9 +45,7 @@ const UpdateProduct = () => {
 
   const getSingleProduct = async () => {
     try {
-      const { data } = await axios.get(
-        `https://backend-ufwh.onrender.com/api/v1/product/get-product/${slug}`
-      );
+      const { data } = await axios.get(`${API}/product/get-product/${slug}`);
       if (data?.success) {
         const p = data.product;
         setProductId(p._id);
@@ -63,9 +60,7 @@ const UpdateProduct = () => {
       }
     } catch (error) {
       console.error("Error fetching product:", error?.response || error);
-      toast.error(
-        error?.response?.data?.message || "Failed to fetch product details"
-      );
+      toast.error("Failed to fetch product details");
     }
   };
 
@@ -74,64 +69,53 @@ const UpdateProduct = () => {
     getSingleProduct();
   }, [slug]);
 
- // Inside handleUpdate function
-const handleUpdate = async (e) => {
-  e.preventDefault();
-  try {
-    if (!token) {
-      toast.error("You are not authorized");
-      return;
-    }
-
-    // Create FormData for multipart request
-    const productData = new FormData();
-    productData.append("name", name);
-    productData.append("description", description);
-    productData.append("price", price);
-    productData.append("quantity", quantity);
-    productData.append("category", category);
-    productData.append("shipping", shipping); 
-    if (photo) productData.append("photo", photo); // only append if changed
-
-    const { data } = await axios.put(
-      `https://backend-ufwh.onrender.com/api/v1/product/update-product/${productId}`,
-      productData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data", // ensure correct header
-        },
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const token = getToken();
+      if (!token) {
+        toast.error("You are not authorized");
+        return;
       }
-    );
 
-    if (data?.success) {
-      toast.success("Product updated successfully!");
-      navigate("/dashboard/admin/products");
-    } else {
-      toast.error(data?.message || "Something went wrong while updating");
+      const productData = new FormData();
+      productData.append("name", name);
+      productData.append("description", description);
+      productData.append("price", price);
+      productData.append("quantity", quantity);
+      productData.append("category", category);
+      productData.append("shipping", shipping === "1"); 
+      if (photo) productData.append("photo", photo);
+
+      const { data } = await axios.put(
+        `${API}/product/update-product/${productId}`,
+        productData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (data?.success) {
+        toast.success("Product updated successfully!");
+        navigate("/dashboard/admin/products");
+      } else {
+        toast.error(data?.message || "Something went wrong while updating");
+      }
+    } catch (error) {
+      console.error("Error updating product:", error?.response || error);
+      toast.error("Something went wrong while updating product");
     }
-  } catch (error) {
-    console.error("Error updating product:", error?.response || error);
-    toast.error(
-      error?.response?.data?.message ||
-        "Something went wrong while updating product"
-    );
-  }
-};
-
-
-
+  };
   const handleDelete = async () => {
     try {
+      const token = getToken();
       if (!token) {
         toast.error("You are not authorized");
         return;
       }
       const { data } = await axios.delete(
-        `https://backend-ufwh.onrender.com/api/v1/product/delete-product/${productId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        `${API}/product/delete-product/${productId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data?.success) {
         toast.success("Product deleted successfully!");
@@ -141,10 +125,7 @@ const handleUpdate = async (e) => {
       }
     } catch (error) {
       console.error("Delete Error:", error?.response || error);
-      toast.error(
-        error?.response?.data?.message ||
-          "Something went wrong while deleting the product"
-      );
+      toast.error("Something went wrong while deleting the product");
     }
   };
 
@@ -184,14 +165,13 @@ const handleUpdate = async (e) => {
                   />
                 </label>
               </div>
-
               {(photo || productId) && (
                 <div className="text-center mb-3">
                   <img
                     src={
                       photo
                         ? URL.createObjectURL(photo)
-                        : `https://backend-ufwh.onrender.com/api/v1/product/product-photo/${productId}`
+                        : `${API}/product/product-photo/${productId}?${new Date().getTime()}`
                     }
                     alt="product_photo"
                     height="200px"
@@ -242,12 +222,14 @@ const handleUpdate = async (e) => {
                 <Option value="1">Yes</Option>
               </Select>
 
-              <button className="btn btn-primary me-2" onClick={handleUpdate}>
-                UPDATE PRODUCT
-              </button>
-              <button className="btn btn-danger" onClick={handleDelete}>
-                DELETE PRODUCT
-              </button>
+              <div className="d-flex">
+                <button className="btn btn-primary me-2" onClick={handleUpdate}>
+                  UPDATE PRODUCT
+                </button>
+                <button className="btn btn-danger" onClick={handleDelete}>
+                  DELETE PRODUCT
+                </button>
+              </div>
             </div>
           </div>
         </div>
